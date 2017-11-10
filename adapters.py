@@ -111,7 +111,7 @@ class ForcedIPHTTPSPoolManager(PoolManager):
         self.dest_ip = kwargs.pop('dest_ip', None)
         super(ForcedIPHTTPSPoolManager, self).__init__(*args, **kwargs)
 
-    def _new_pool(self, scheme, host, port):
+    def _new_pool(self, scheme, host, port, request_context=None):
             kwargs = self.connection_pool_kw
             assert scheme == 'https'
             kwargs['dest_ip'] = self.dest_ip
