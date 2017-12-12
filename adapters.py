@@ -88,7 +88,8 @@ except ImportError:
 # Requests older than 2.4.0's VerifiedHHTPSConnection is broken and doesn't
 # properly use _new_conn. On these versions, use UnverifiedHTTPSConnection
 # instead.
-if requests.__version__.split(".") < ['2', '4', '0']:
+from distutils.version import StrictVersion
+if StrictVersion(requests.__version__) < StrictVersion('2.4.0'):
     from requests.packages.urllib3.connection import (
         UnverifiedHTTPSConnection as HTTPSConnection
     )
