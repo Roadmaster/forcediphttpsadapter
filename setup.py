@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
 """
-This module implements a set of requests TransportAdapter, PoolManager, ConnectionPool and
-HTTPSConnection with one goal only:
+This module implements a set of requests TransportAdapter, PoolManager,
+ConnectionPool and HTTPSConnection with one goal only:
 
-to use a specific IP address when connecting via SSL to a web service without running into SNI trouble.
-The usual technique to force an IP address on an HTTP connection with Requests is
-(assuming I want http://example.com/some/path on IP 1.2.3.4):
+to use a specific IP address when connecting via SSL to a web service without
+running into SNI trouble.  The usual technique to force an IP address on an
+HTTP connection with Requests is (assuming I want http://example.com/some/path
+on IP 1.2.3.4):
 
 requests.get("http://1.2.3.4/some/path", headers={'Host': 'example.com'})
+
 this is useful if I want to specifically test how 1.2.3.4 is responding;
 for instance, if example.com is DNS round-robined to several IP addresses
 and I want to hit one of them specifically.
@@ -19,7 +21,7 @@ from setuptools import setup, find_packages
 PACKAGE_NAME = 'forcediphttpsadapter'
 PACKAGE_VERSION = '1.0.0'
 AUTHOR = 'Roadmaster'
-EMAIL = 'your@email'
+EMAIL = 'daniel@tomechangosubanana.com'
 URL = 'https://github.com/Roadmaster/forcediphttpsadapter'
 
 
