@@ -18,7 +18,7 @@ URL = 'https://github.com/Roadmaster/forcediphttpsadapter'
 setup(
     name=PACKAGE_NAME,
     version=PACKAGE_VERSION,
-    description=__doc__,
+    description=__doc__.replace("\n", " "),
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
