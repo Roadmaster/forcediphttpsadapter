@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = 'forcediphttpsadapter'
-PACKAGE_VERSION = '1.0.0'
+PACKAGE_VERSION = '1.0.1'
 AUTHOR = 'Roadmaster'
 EMAIL = 'daniel@tomechangosubanana.com'
 URL = 'https://github.com/Roadmaster/forcediphttpsadapter'
