@@ -54,7 +54,13 @@ Specifically:
 How to use it
 =============
 
-It's like any other transport adapter. Just pass the IP address that
+First install it:
+
+```
+pip install forcediphttpsadapter
+```
+
+Then, it's like any other transport adapter. Just pass the IP address that
 connections to the given URL prefix should use.
 
 ```
