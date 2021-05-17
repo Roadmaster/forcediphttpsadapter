@@ -58,6 +58,8 @@ It's like any other transport adapter. Just pass the IP address that
 connections to the given URL prefix should use.
 
 ```
+from adapters import ForcedIPHTTPSAdapter
+
 session = requests.Session()
 session.mount("https://example.com", ForcedIPHTTPSAdapter(dest_ip='1.2.3.4'))
 response = session.get(
