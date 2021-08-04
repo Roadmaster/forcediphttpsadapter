@@ -113,8 +113,8 @@ class ForcedIPHTTPSPoolManager(PoolManager):
         super(ForcedIPHTTPSPoolManager, self).__init__(*args, **kwargs)
 
     def _new_pool(self, scheme, host, port, request_context=None):
-            kwargs = self.connection_pool_kw
             assert scheme == 'https'
+            kwargs = self.connection_pool_kw.copy()
             kwargs['dest_ip'] = self.dest_ip
             return ForcedIPHTTPSConnectionPool(host, port, **kwargs)
 
@@ -133,12 +133,12 @@ class ForcedIPHTTPSConnectionPool(HTTPSConnectionPool):
                 actual_host = self.proxy.host
                 actual_port = self.proxy.port
 
-            self.conn_kw = getattr(self, 'conn_kw', {})
-            self.conn_kw['dest_ip'] = self.dest_ip
+            conn_kw = getattr(self, 'conn_kw', {}).copy()
+            conn_kw['dest_ip'] = self.dest_ip
             conn = ForcedIPHTTPSConnection(
                 host=actual_host, port=actual_port,
                 timeout=self.timeout.connect_timeout,
-                strict=self.strict, **self.conn_kw)
+                strict=self.strict, **conn_kw)
             pc = self._prepare_conn(conn)
             return pc
 
