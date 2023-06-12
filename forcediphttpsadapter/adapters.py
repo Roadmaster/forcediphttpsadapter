@@ -78,6 +78,7 @@ from requests.packages.urllib3.poolmanager import (
         PoolManager, HTTPSConnectionPool,
 )
 from requests.packages.urllib3.exceptions import ConnectTimeoutError
+
 try:
     # For requests 2.9.x
     from requests.packages.urllib3.util import connection
@@ -113,38 +114,10 @@ class ForcedIPHTTPSPoolManager(PoolManager):
         super(ForcedIPHTTPSPoolManager, self).__init__(*args, **kwargs)
 
     def _new_pool(self, scheme, host, port, request_context=None):
-            assert scheme == 'https'
-            kwargs = self.connection_pool_kw.copy()
-            kwargs['dest_ip'] = self.dest_ip
-            return ForcedIPHTTPSConnectionPool(host, port, **kwargs)
-
-
-class ForcedIPHTTPSConnectionPool(HTTPSConnectionPool):
-    def __init__(self, *args, **kwargs):
-        self.dest_ip = kwargs.pop('dest_ip', None)
-        super(ForcedIPHTTPSConnectionPool, self).__init__(*args, **kwargs)
-
-    def _new_conn(self):
-            self.num_connections += 1
-
-            actual_host = self.host
-            actual_port = self.port
-            if self.proxy is not None:
-                actual_host = self.proxy.host
-                actual_port = self.proxy.port
-
-            conn_kw = getattr(self, 'conn_kw', {}).copy()
-            conn_kw['dest_ip'] = self.dest_ip
-            conn = ForcedIPHTTPSConnection(
-                host=actual_host, port=actual_port,
-                timeout=self.timeout.connect_timeout,
-                strict=self.strict, **conn_kw)
-            pc = self._prepare_conn(conn)
-            return pc
-
-    def __str__(self):
-        return '%s(host=%r, port=%r, dest_ip=%s)' % (
-            type(self).__name__, self.host, self.port, self.dest_ip)
+        assert scheme == 'https'
+        kwargs = self.connection_pool_kw.copy()
+        kwargs['dest_ip'] = self.dest_ip
+        return ForcedIPHTTPSConnectionPool(host, port, **kwargs)
 
 
 class ForcedIPHTTPSConnection(HTTPSConnection, object):
@@ -169,10 +142,29 @@ class ForcedIPHTTPSConnection(HTTPSConnection, object):
         except SocketTimeout as e:
             raise ConnectTimeoutError(
                 self, "Connection to %s timed out. (connect timeout=%s)" %
-                (self.host, self.timeout))
+                      (self.host, self.timeout))
 
         except SocketError as e:
             raise NewConnectionError(
                 self, "Failed to establish a new connection: %s" % e)
 
         return conn
+
+
+class ForcedIPHTTPSConnectionPool(HTTPSConnectionPool):
+    def __init__(self, *args, **kwargs):
+        self.dest_ip = kwargs.pop('dest_ip', None)
+        super(ForcedIPHTTPSConnectionPool, self).__init__(*args, **kwargs)
+
+    def _new_conn(self) -> ForcedIPHTTPSConnection:
+        """
+        Return a fresh :class:`urllib3.connection.HTTPConnection`.
+        """
+        self.ConnectionCls = ForcedIPHTTPSConnection
+        conn = super()._new_conn()
+        conn.dest_ip = self.dest_ip
+        return conn
+
+    def __str__(self):
+        return '%s(host=%r, port=%r, dest_ip=%s)' % (
+            type(self).__name__, self.host, self.port, self.dest_ip)
