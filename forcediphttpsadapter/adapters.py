@@ -68,7 +68,7 @@ response = session.get(
 # if it's <2.7.9 decide to use the old "http://$IP/ technique. If Python is
 # >2.7.9 and the adapter doesn't work, unfortunately, there's nothing that can
 # be done :(
-from distutils.version import StrictVersion
+from packaging.version import Version
 from socket import error as SocketError, timeout as SocketTimeout
 
 import requests
@@ -90,7 +90,7 @@ except ImportError:
 # Requests older than 2.4.0's VerifiedHHTPSConnection is broken and doesn't
 # properly use _new_conn. On these versions, use UnverifiedHTTPSConnection
 # instead.
-if StrictVersion(requests.__version__) < StrictVersion('2.4.0'):
+if Version(requests.__version__) < Version('2.4.0'):
     from requests.packages.urllib3.connection import (
         UnverifiedHTTPSConnection as HTTPSConnection
     )
